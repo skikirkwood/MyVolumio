@@ -515,7 +515,7 @@ if ($settings['hash_salt']) {
  * must exist and be writable by Drupal. This directory must be relative to
  * the Drupal installation directory and be accessible over the web.
  */
-$settings['file_public_path'] = 'sites/eejambras.dev.dd/files';
+//$settings['file_public_path'] = 'sites/eejambras.dev.dd/files';
 
 /**
  * Private file path:
@@ -749,9 +749,9 @@ $settings['file_scan_ignore_directories'] = [
  *
  * Keep this code block at the end of this file to take full effect.
  */
-# if (file_exists(__DIR__ . '/settings.local.php')) {
-#   include __DIR__ . '/settings.local.php';
-# }
+ if (file_exists(__DIR__ . '/settings.local.php')) {
+   include __DIR__ . '/settings.local.php';
+ }
 
 
 // On Acquia Cloud, this include file configures Drupal to use the correct
