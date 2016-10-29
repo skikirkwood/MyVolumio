@@ -244,7 +244,7 @@
  *   );
  * @endcode
  */
-$config_directories = array();
+$config_directories['sync'] = 'sites/eejambras.dev.dd/files/config_2e99e0a65c1bf60adc4d5e53d03438f46fecff1c/sync';
 
 /**
  * Settings:
@@ -266,7 +266,7 @@ $config_directories = array();
  *
  * @see install_select_profile()
  */
-# $settings['install_profile'] = '';
+$settings['install_profile'] = 'standard';
 
 /**
  * Salt for one-time login links, cancel links, form tokens, etc.
