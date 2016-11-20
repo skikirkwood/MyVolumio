@@ -1,5 +1,0 @@
-# put any in-context links into here
-lingotek.upload:
-  title: 'Upload'
-  route_name: 'lingotek.settings'
-  group: 'node'
