@@ -245,7 +245,11 @@
  * @endcode
  */
 $config_directories = array();
+$config_directories['sync'] = 'sites/default/files/config_acqTmp-2016-11-19T17.14.25-1438/sync';
 
+$settings['trusted_host_patterns'] = array(
+'^lightning-8-x-1-13-core.dd$',
+);
 /**
  * Settings:
  *
