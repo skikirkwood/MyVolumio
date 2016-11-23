@@ -1,0 +1,14 @@
+name: Lingotek Translation Test Helper
+type: module
+package: Testing
+# version: VERSION
+# core: 8.x
+
+dependencies:
+  - lingotek
+
+# Information added by Drupal.org packaging script on 2016-11-11
+version: '8.x-1.12'
+core: '8.x'
+project: 'lingotek'
+datestamp: 1478833447

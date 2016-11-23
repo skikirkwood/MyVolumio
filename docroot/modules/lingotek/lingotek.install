@@ -1,0 +1,178 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Lingotek module.
+ */
+
+/*
+ * Implements hook_schema().
+ */
+function lingotek_schema() {
+  $schema['lingotek_content_metadata'] = array(
+    'description' => 'Stores Lingotek-related metadata about Drupal entities.',
+    'fields' => array(
+      'document_id' => array(
+        'description' => 'The Lingotek document identifier.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'entity_type' => array(
+        'description' => 'The entity type (node, comment, etc.).',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'entity_id' => array(
+        'description' => 'The primary identifier for the entity.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array(
+      'document_id',
+    ),
+  );
+
+  $schema['lingotek_translation_agent'] = array(
+    'description' => 'An assignment of IDs to agents from which translations were added.',
+    'fields' => array(
+      'id' => array(
+        'description' => 'the ID assigned to a given translation agent.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'name' => array(
+        'description' => 'The name of a given tool for adding translations.',
+        'type' => 'varchar',
+        'length' => 63,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+    ),
+    'primary key' => array(
+      'id',
+    ),
+  );
+  $schema['lingotek_config_map'] = array(
+    'description' => 'An assignment of lids from locales_source and locales_target to set_ids for translation by Lingotek.',
+    'fields' => array(
+      'lid' => array(
+        'description' => 'The ID assigned by the i18n_string module.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'set_id' => array(
+        'description' => 'The ID of the set assigned to the string by the Lingotek Translation module.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'current' => array(
+        'description' => 'Tells whether the translation for the individual config item is dirty and needs to be updated or not.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array(
+      'lid',
+    ),
+  );
+
+  return $schema;
+}
+
+/*
+ * Implements hook_update_N().
+ */
+function lingotek_update_8001() {
+  // Get all mappers and update config entity ones, but not field ones.
+  /** @var \Drupal\config_translation\ConfigMapperManager $mapper_manager */
+  $mapper_manager = \Drupal::service('plugin.manager.config_translation.mapper');
+  $mappers = $mapper_manager->getMappers();
+  foreach ($mappers as $mapper_id => $mapper) {
+    if ($mapper instanceof \Drupal\config_translation\ConfigEntityMapper &&
+       !$mapper instanceof \Drupal\config_translation\ConfigFieldMapper) {
+
+      $ids = \Drupal::service('entity.query')->get($mapper_id)
+        ->exists('third_party_settings.lingotek.lingotek_document_id')
+        ->execute();
+
+      if (!empty($ids)) {
+        /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface[] $entities */
+        $entities = \Drupal::entityManager()->getStorage($mapper_id)->loadMultiple($ids);
+        foreach ($entities as $entity) {
+          $settings = $entity->getThirdPartySettings('lingotek');
+
+          $metadata = \Drupal\lingotek\Entity\LingotekConfigMetadata::loadByConfigName($entity->getEntityTypeId() . '.' . $entity->id());
+          $metadata->setDocumentId($settings['lingotek_document_id']);
+          $metadata->setSourceStatus($settings['lingotek_translation_source']);
+          $metadata->setTargetStatus($settings['lingotek_translation_status']);
+          $metadata->setHash($settings['lingotek_hash']);
+          $metadata->save();
+
+          $entity->unsetThirdPartySetting('lingotek', 'lingotek_document_id');
+          $entity->unsetThirdPartySetting('lingotek', 'lingotek_translation_source');
+          $entity->unsetThirdPartySetting('lingotek', 'lingotek_translation_status');
+          $entity->unsetThirdPartySetting('lingotek', 'lingotek_hash');
+          $entity->save();
+        }
+      }
+    }
+  }
+  // Take care of fields now.
+  $ids = \Drupal::service('entity.query')->get('field_config')
+    ->exists('third_party_settings.lingotek.lingotek_document_id')
+    ->execute();
+  if (!empty($ids)) {
+    $entities = \Drupal::entityManager()->getStorage('field_config')->loadMultiple($ids);
+    foreach ($entities as $entity) {
+      $settings = $entity->getThirdPartySettings('lingotek');
+
+      $metadata = \Drupal\lingotek\Entity\LingotekConfigMetadata::loadByConfigName($entity->getEntityTypeId() . '.' . $entity->id());
+      $metadata->setDocumentId($settings['lingotek_document_id']);
+      $metadata->setSourceStatus($settings['lingotek_translation_source']);
+      $metadata->setTargetStatus($settings['lingotek_translation_status']);
+      $metadata->setHash($settings['lingotek_hash']);
+      $metadata->save();
+
+      $entity->unsetThirdPartySetting('lingotek', 'lingotek_document_id');
+      $entity->unsetThirdPartySetting('lingotek', 'lingotek_translation_source');
+      $entity->unsetThirdPartySetting('lingotek', 'lingotek_translation_status');
+      $entity->unsetThirdPartySetting('lingotek', 'lingotek_hash');
+      $entity->save();
+
+    }
+  }
+
+}
+
+/**
+ * Update lingotek_profile definition after adding the lingotek prefix.
+ */
+function lingotek_update_8002() {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $entity_type = $manager->getEntityType('profile');
+  $entity_type->set('id', 'lingotek_profile');
+  $manager->installEntityType($entity_type);
+}
+
+/**
+ * Clear route names cache.
+ */
+function lingotek_update_8003() {
+  // We changed a route name, so we need to ensure that the routing caches are
+  // cleared.
+}
