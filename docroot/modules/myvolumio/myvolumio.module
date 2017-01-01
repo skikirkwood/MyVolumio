@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * @file
+ * Mailchimp module.
+ */
+
+namespace Drupal\myvolumio;
+
+use \Drupal\node\Entity\Node;
+use \Drupal\myvolumio\Api;
+
+/**
+ * Testing
+ */
+function myvolumio_test_api() {
+
+    $myvolumio = new \Drupal\myvolumio\Api\myvolumioApi();
+
+    $result = $myvolumio->backupMyWebRadios('my-web-radio', 'myRadios');
+
+    $result = $myvolumio->backupMyWebRadios('radio-favourites', 'radios');
+
+    $result = $myvolumio->backupMyWebRadios('playlist', 'playlist');
+
+    // Post something back
+
+    $query = \Drupal::entityQuery('node')
+        ->condition('status', 1)
+        ->condition('type', 'volumio_setting')
+        ->condition('uid', \Drupal::currentUser()->id());
+
+    $nids = $query->execute();
+
+    // Load a single node.
+    $json_object1 = Node::load(62);
+    $json_string = $json_object1->field_volumio_setting_value->getValue();
+    $webradios = $json_string[0]['value'];
+
+    $volumio_response = $myvolumio->restoreRadios('my-web-radio', 'myRadios', $webradios);
+
+    return $volumio_response;
+
+}
+
+function backupMyWebRadio() {
+
+    $myvolumio = new \Drupal\myvolumio\Api\myvolumioApi();
+
+    $result = $myvolumio->backupMyWebRadios('my-web-radio', 'myRadios');
+
+    return $result;
+}
+
+function backupMyRadioFavourites() {
+
+    $myvolumio = new \Drupal\myvolumio\Api\myvolumioApi();
+
+    $result = $myvolumio->backupMyRadioFavourites('radio-favourites', 'radios');
+
+    return $result;
+}
+
+function backupMyPlaylists() {
+
+    $myvolumio = new \Drupal\myvolumio\Api\myvolumioApi();
+
+    $result = $myvolumio->backupMyWebRadios('playlist', 'playlist');
+
+    return $result;
+}
+
+function backupMyConfig() {
+
+    $myvolumio = new \Drupal\myvolumio\Api\myvolumioApi();
+
+    $result = $myvolumio->backupMyConfig();
+
+    return $result;
+
+}

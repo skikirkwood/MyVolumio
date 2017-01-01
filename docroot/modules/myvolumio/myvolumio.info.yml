@@ -1,0 +1,6 @@
+name: MyVolumio Module
+description: Integrates MyVolumio Drupal-based with Volumio on a local area network.
+package: MyVolumio
+type: module
+version: 1.0
+core: 8.x

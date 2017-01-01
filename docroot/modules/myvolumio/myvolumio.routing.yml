@@ -1,0 +1,39 @@
+myvolumio.content:
+  path: '/myvolumio'
+  defaults:
+    _controller: '\Drupal\myvolumio\Controller\myvolumioController::test'
+    _title: 'MyVolumio'
+  requirements:
+    _permission: 'access content'
+
+myvolumio.backup_mywebradios:
+  path: '/backup/mywebradio'
+  defaults:
+    _controller: '\Drupal\myvolumio\Controller\myvolumioController::backupMyWebRadio'
+    _title: 'MyVolumio Radios Backup'
+  requirements:
+    _permission: 'access content'
+
+myvolumio.backup_myradiofavourites:
+  path: '/backup/radios'
+  defaults:
+    _controller: '\Drupal\myvolumio\Controller\myvolumioController::backupMyRadioFavourites'
+    _title: 'MyVolumio Radio Favourites Backup'
+  requirements:
+    _permission: 'access content'
+
+myvolumio.backup_playlists:
+  path: '/backup/playlists'
+  defaults:
+    _controller: '\Drupal\myvolumio\Controller\myvolumioController::backupMyPlaylists'
+    _title: 'MyVolumio Playlists Backup'
+  requirements:
+    _permission: 'access content'
+
+myvolumio.backup_config:
+  path: '/backup/config'
+  defaults:
+    _controller: '\Drupal\myvolumio\Controller\myvolumioController::backupMyConfig'
+    _title: 'MyVolumio Config Backup'
+  requirements:
+    _permission: 'access content'

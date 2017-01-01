@@ -1,0 +1,6 @@
+myvolumio.admin:
+  title: 'MyVolumio module settings'
+  description: 'MyVolumio admin settings page link'
+  parent: system.admin_config_development
+  route_name: myvolumio.content
+  weight: 100
