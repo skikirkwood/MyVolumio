@@ -45,4 +45,13 @@ class myvolumioController  extends ControllerBase {
         return $this->redirect('entity.node.edit_form', ['node' => $node]);
     }
 
+    public function restorePlaylist($nid) {
+
+        $result = \Drupal\myvolumio\restorePlaylist($nid);
+        return array(
+            '#type' => 'markup',
+            '#markup' => $result,
+        );
+    }
+
 }

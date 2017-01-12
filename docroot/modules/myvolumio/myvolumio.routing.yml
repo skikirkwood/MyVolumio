@@ -37,3 +37,11 @@ myvolumio.backup_config:
     _title: 'MyVolumio Config Backup'
   requirements:
     _permission: 'access content'
+
+myvolumio.restore_playlist:
+  path: '/restore/playlist/{nid}'
+  defaults:
+    _controller: '\Drupal\myvolumio\Controller\myvolumioController::restorePlaylist'
+    _title: 'MyVolumio Restore Playlist'
+  requirements:
+    _permission: 'access content'

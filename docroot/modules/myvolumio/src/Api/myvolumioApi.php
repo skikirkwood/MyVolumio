@@ -119,6 +119,15 @@ class myvolumioApi
         return $volumio_response;
     }
 
+    public function restorePlaylist($nid) {
+
+        $json = $this->getNodeValue($nid);
+        $result = $this->restoreRadios('my-web-radio', 'myRadios', $json);
+
+        return $result;
+
+    }
+
     public function backupConfig() {
 
         $config = $this->getConfig();
@@ -168,6 +177,15 @@ class myvolumioApi
         ]);
 
         return $volumio_response;
+    }
+
+    public function getNodeValue($nid) {
+
+        $json_object = Node::load($nid);
+        $json_string = $json_object->field_volumio_setting_value->getValue();
+        $json = $json_string[0]['value'];
+
+        return $json;
     }
 
     public function makePostRequest($url, $json = array())
@@ -236,7 +254,7 @@ class myvolumioApi
     public function getEndpointUrl($endpoint)
     {
 
-        return 'http://volumio.local/api/v1/' . $endpoint;
+        return 'http://volumio2.local/api/v1/' . $endpoint;
     }
 
     /**

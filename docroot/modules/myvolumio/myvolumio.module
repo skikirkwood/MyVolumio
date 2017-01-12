@@ -21,7 +21,7 @@ function myvolumio_test_api() {
 
     $result = $myvolumio->backupMyWebRadios('radio-favourites', 'radios');
 
-    $result = $myvolumio->backupMyWebRadios('playlist', 'playlist');
+//    $result = $myvolumio->backupMyWebRadios('playlist', 'playlist');
 
     // Post something back
 
@@ -33,9 +33,11 @@ function myvolumio_test_api() {
     $nids = $query->execute();
 
     // Load a single node.
-    $json_object1 = Node::load(62);
-    $json_string = $json_object1->field_volumio_setting_value->getValue();
-    $webradios = $json_string[0]['value'];
+//    $json_object1 = Node::load(62);
+//    $json_string = $json_object1->field_volumio_setting_value->getValue();
+//    $webradios = $json_string[0]['value'];
+
+    $webradios = $myvolumio->getNodeValue(62);
 
     $volumio_response = $myvolumio->restoreRadios('my-web-radio', 'myRadios', $webradios);
 
@@ -75,6 +77,16 @@ function backupMyConfig() {
     $myvolumio = new \Drupal\myvolumio\Api\myvolumioApi();
 
     $result = $myvolumio->backupMyConfig();
+
+    return $result;
+
+}
+
+function restorePlaylist($nid) {
+
+    $myvolumio = new \Drupal\myvolumio\Api\myvolumioApi();
+
+    $result = $myvolumio->restorePlaylist($nid);
 
     return $result;
 
